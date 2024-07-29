@@ -1,9 +1,13 @@
 "use client"
-import { updateNotes } from '@/appwrite/notes.actions'
-import { autoGrow, bodyParser, saveData, setNewOffset, setZIndex } from '@/lib/utils'
-import { Trash } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
-type NoteCardProps = {
+import { deleteNotes, updateNotes } from '@/appwrite/notes.actions'
+import { NoteContext } from '@/context/NoteContext'
+import { autoGrow, bodyParser, setNewOffset, setZIndex } from '@/lib/utils'
+import { Trash, Loader, Plus, Menu, Ellipsis } from 'lucide-react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import AddNotes from '../AddNotes'
+import NoteActionButton from '../NoteActionButton'
+
+export type NoteCardProps = {
     note: {
         $id: string,
         body: string,
@@ -13,28 +17,38 @@ type NoteCardProps = {
 }
 
 const NoteCard = ({ note }: NoteCardProps) => {
-    const body = bodyParser(note.body)
-    const colors = JSON.parse(`${note.colors}`)
+    const { $id, body: noteBody, colors: noteColors, position: notePosition } = note
+    const body = bodyParser(noteBody)
+    const colors = JSON.parse(noteColors)
+    const [position, setPosition] = useState(bodyParser(notePosition))
+    const [isSaving, setIsSaving] = useState(false)
 
-    const [position, setPosition] = useState(JSON.parse(note.position))
+    // @ts-ignore
+    const { setNotes } = useContext(NoteContext)
 
     const textAreaRef = useRef(null)
     const cardRef = useRef(null)
+    const keyUpTimer = useRef(null)
 
     let mouseStartPos = { x: 0, y: 0 }
 
     useEffect(() => {
         autoGrow(textAreaRef)
+        setZIndex(cardRef.current)
     }, [])
 
     const mouseDown = (e: any) => {
-        mouseStartPos.x = e.clientX
-        mouseStartPos.y = e.clientY
-        document.addEventListener("mousemove", mouseMove)
-        document.addEventListener("mouseup", mouseUp)
+        if (e.target.className === "card-header") {
+            setZIndex(cardRef.current);
+            mouseStartPos.x = e.clientX
+            mouseStartPos.y = e.clientY
+            document.addEventListener("mousemove", mouseMove)
+            document.addEventListener("mouseup", mouseUp)
+        }
     }
 
     const mouseMove = (e: any) => {
+
         const mouseMoveDir = {
             x: mouseStartPos.x - e.clientX,
             y: mouseStartPos.y - e.clientY
@@ -49,15 +63,41 @@ const NoteCard = ({ note }: NoteCardProps) => {
             setPosition(newPosition)
             setZIndex(cardRef.current)
         }
+
     }
 
 
-    const mouseUp = async () => {
+    const mouseUp = () => {
         document.removeEventListener("mousemove", mouseMove);
         document.removeEventListener("mouseup", mouseUp);
 
         const newPosition = setNewOffset(cardRef.current)
-        saveData(note.$id, "position", newPosition)
+        saveData($id, "position", newPosition)
+    }
+
+    const saveData = async (id: string, key: any, value: any) => {
+        const payload = { [key]: JSON.stringify(value) }
+        await updateNotes(id, payload)
+        setIsSaving(false)
+    }
+
+    const handleKeyUp = () => {
+        setIsSaving(true)
+
+        if (keyUpTimer.current) {
+            clearTimeout(keyUpTimer.current)
+        }
+
+        // @ts-ignore
+        keyUpTimer.current = setTimeout(() => {
+            // @ts-ignore
+            saveData($id, "body", textAreaRef.current?.value)
+        }, 2000)
+    }
+
+    const handleDeleteNotes = async () => {
+        await deleteNotes($id)
+        setNotes((prev: any) => prev.filter((n: any) => $id !== n.$id))
     }
 
     return (
@@ -69,16 +109,26 @@ const NoteCard = ({ note }: NoteCardProps) => {
             }}
             ref={cardRef}
         >
-            <div className={`flex justify-between items-center p-2 rounded-t-md`} style={{
+            <div className={`card-header`} style={{
                 backgroundColor: colors.colorHeader
             }}
                 onMouseDown={mouseDown}
                 onMouseUp={mouseUp}
             >
-                <Trash />
+                <AddNotes />
+                <div className='flex space-x-2'>
+                    {isSaving && (
+                        <div className='flex space-x-2'>
+                            <Loader className='animate-spin w-3' />
+                            <span className='text-xs'>Saving...</span>
+                        </div>
+                    )}
+                    <NoteActionButton handleDeleteNotes={handleDeleteNotes} />
+                </div>
             </div>
             <div className='p-4 rounded-t-none rounded-b-md'>
                 <textarea
+                    onKeyUp={handleKeyUp}
                     ref={textAreaRef}
                     className={`text-${colors.colorText} bg-inherit border-none w-full h-full resize-none text-[16px] focus:border-none focus:outline-none`}
                     defaultValue={body}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import NoteProvider from "@/context/NoteContext";
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -20,10 +21,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+
     <html lang="en">
       <body className={cn("min-h-screen font-sans antialiased bg-dark-300", fontSans.variable)}>
-        {children}
+        <NoteProvider>
+          {children}
+        </NoteProvider>
       </body>
     </html>
+
   );
 }

@@ -1,4 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .card-header {
+        @apply flex justify-between items-center p-2 rounded-t-md
+    }
+}
   

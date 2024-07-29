@@ -1,10 +1,10 @@
-import { getNotes } from '@/appwrite/notes.actions'
+"use client"
 import NoteCard from '@/components/ui/NoteCard'
-// import { fakeData as notes } from '@/public/assets/fakeData'
-import React from 'react'
+import { NoteContext } from '@/context/NoteContext'
+import React, { useContext } from 'react'
 
-const NotesPage = async() => {
-  const notes = await getNotes()
+const NotesPage = () => {
+    const {notes} = useContext(NoteContext)
   return (
     notes!.map((note) => (
       // @ts-ignore

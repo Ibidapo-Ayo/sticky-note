@@ -42,8 +42,3 @@ export const bodyParser = (value:string)=>{
     return value
   }
 }
-
-export const saveData = async (id:string, key: any, value: any) => {
-  const payload = { [key]: JSON.stringify(value) }
-  await updateNotes(id, payload)
-}
