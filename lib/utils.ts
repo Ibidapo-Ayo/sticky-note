@@ -27,10 +27,11 @@ export const autoGrow = (textarea: React.MutableRefObject<HTMLDivElement | null>
 export const setZIndex = (selectedCard: any) => {
   selectedCard.style.zIndex = 999
 
-  // @ts-ignore
-  Array.from(document.getElementsByClassName("card")).forEach((card) => {
-    if (card !== selectedCard) {
-      card.style.zIndex = selectedCard.style.zIndex - 1
+  Array.from(document.getElementsByClassName("card")as HTMLCollectionOf<HTMLElement>).forEach((card) => {
+    
+  const element = card as HTMLElement;
+    if (element !== selectedCard) {
+      element.style.zIndex = `${selectedCard.style.zIndex - 1}`
     }
   })
 }
