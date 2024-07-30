@@ -18,7 +18,8 @@ const AddNotes = () => {
       }),
       colors: JSON.stringify(colors[0])
     }
-    startingPos.current += 10
+    console.log(startingPos.current)
+    startingPos.current + 10
     const response = await createNotes(payload)
 
     setNotes((prev: any) => [...prev, response])
