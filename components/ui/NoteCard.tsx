@@ -1,11 +1,13 @@
 "use client"
 import { deleteNotes, updateNotes } from '@/appwrite/notes.actions'
 import { NoteContext } from '@/context/NoteContext'
-import { autoGrow, bodyParser, setNewOffset, setZIndex } from '@/lib/utils'
+import { autoGrow, bodyParser, saveData, setNewOffset, setZIndex } from '@/lib/utils'
 import { Trash, Loader, Plus, Menu, Ellipsis } from 'lucide-react'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import AddNotes from '../AddNotes'
 import NoteActionButton from '../NoteActionButton'
+import Colors from '../Colors'
+import allColors from "@/public/assets/colors.json"
 
 export type NoteCardProps = {
     note: {
@@ -23,6 +25,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
     const [position, setPosition] = useState(bodyParser(notePosition))
     const [isSaving, setIsSaving] = useState(false)
     const [deleting, setDeleting] = useState(false)
+    const [noteColor, setNoteColor] = useState(colors)
 
     // @ts-ignore
     const { setNotes } = useContext(NoteContext)
@@ -49,7 +52,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
     }
 
     const mouseMove = (e: any) => {
-       
+
         const mouseMoveDir = {
             x: mouseStartPos.x - e.clientX,
             y: mouseStartPos.y - e.clientY
@@ -72,11 +75,6 @@ const NoteCard = ({ note }: NoteCardProps) => {
 
         const newPosition = setNewOffset(cardRef.current)
         saveData($id, "position", newPosition)
-    }
-
-    const saveData = async (id: string, key: any, value: any) => {
-        const payload = { [key]: JSON.stringify(value) }
-        await updateNotes(id, payload)
         setIsSaving(false)
     }
 
@@ -91,6 +89,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
         keyUpTimer.current = setTimeout(() => {
             // @ts-ignore
             saveData($id, "body", textAreaRef.current?.value)
+            setIsSaving(false)
         }, 2000)
     }
 
@@ -101,17 +100,29 @@ const NoteCard = ({ note }: NoteCardProps) => {
         setDeleting(false)
     }
 
+    useEffect(() => {
+        if (noteColor.id !== colors.id) {
+            handleUpdateNote()
+        }
+    }, [noteColor])
+
+    const handleUpdateNote = async () => {
+        const color = allColors.filter((color: any) => color.id === noteColor.id)
+        await saveData($id, "colors", color[0])
+    }
+
     return (
-        <div className='w-[600px] rounded-md absolute cursor-pointer shadow-md card'
+        <div className='w-[400px] rounded-md absolute cursor-pointer shadow-md card'
             style={{
-                backgroundColor: colors.colorBody,
+                backgroundColor: noteColor.colorBody,
                 left: `${position.x}px`,
                 top: `${position.y}px`
             }}
             ref={cardRef}
         >
             <div className={`card-header`} style={{
-                backgroundColor: colors.colorHeader
+                backgroundColor: noteColor.colorHeader,
+                width: "100%"
             }}
                 onMouseDown={mouseDown}
                 onMouseUp={mouseUp}
@@ -131,11 +142,15 @@ const NoteCard = ({ note }: NoteCardProps) => {
                 <textarea
                     onKeyUp={handleKeyUp}
                     ref={textAreaRef}
-                    className={`text-${colors.colorText} bg-inherit border-none w-full h-full resize-none text-[16px] focus:border-none focus:outline-none`}
+                    className={`text-${noteColor.colorText} bg-inherit border-none w-full h-full resize-none text-[16px] focus:border-none focus:outline-none`}
                     defaultValue={body}
                     onInput={() => autoGrow(textAreaRef)}
                     onFocus={() => setZIndex(cardRef.current)}
                 />
+            </div>
+
+            <div className='w-full grid justify-end p-2'>
+                <Colors color={noteColor} setNoteColor={setNoteColor} />
             </div>
         </div>
     )

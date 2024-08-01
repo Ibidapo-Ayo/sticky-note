@@ -4,7 +4,7 @@
 
 @layer components {
   .card-header {
-    @apply flex justify-between items-center p-2 rounded-t-md;
+    @apply flex justify-between items-center px-2 rounded-t-md;
   }
   .container {
     @apply relative flex-1 overflow-y-auto px-[5%];

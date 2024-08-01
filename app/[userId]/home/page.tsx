@@ -14,8 +14,9 @@ const Home = ({ params }: any) => {
     
     return (
         <div className='md:py-10 p-2 pb-2 h-screen relative overflow-hidden'>
-            {loading ? <div className="w-full h-screen flex justify-center items-center">
+            {loading ? <div className="w-full h-screen flex flex-col justify-center  space-y-5 items-center">
                 <Loader className="text-white animate-spin " />
+                <span className='text-white'>Generating your sticky notes...</span>
             </div> : (
                 notes!.map((note) => (
                     <NoteCard key={note.$id} note={note} />
