@@ -38,7 +38,7 @@ const Register = () => {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
             const user = await registerUser(values)
-            if (user) router.push(`/${user.documents[0].$id}/home`)
+            if (user) router.push(`/${user.$id}/home`)
         } catch (error) {
             console.log(error)
         }

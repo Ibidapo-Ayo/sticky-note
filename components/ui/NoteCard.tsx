@@ -49,15 +49,13 @@ const NoteCard = ({ note }: NoteCardProps) => {
     }
 
     const mouseMove = (e: any) => {
-
+       
         const mouseMoveDir = {
             x: mouseStartPos.x - e.clientX,
             y: mouseStartPos.y - e.clientY
         }
-
         mouseStartPos.x = e.clientX
         mouseStartPos.y = e.clientY
-
         const newPosition = setNewOffset(cardRef.current, mouseMoveDir)
 
         if (cardRef.current) {
