@@ -22,6 +22,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
     const colors = JSON.parse(noteColors)
     const [position, setPosition] = useState(bodyParser(notePosition))
     const [isSaving, setIsSaving] = useState(false)
+    const [deleting, setDeleting] = useState(false)
 
     // @ts-ignore
     const { setNotes } = useContext(NoteContext)
@@ -96,8 +97,10 @@ const NoteCard = ({ note }: NoteCardProps) => {
     }
 
     const handleDeleteNotes = async () => {
+        setDeleting(true)
         await deleteNotes($id)
         setNotes((prev: any) => prev.filter((n: any) => $id !== n.$id))
+        setDeleting(false)
     }
 
     return (
@@ -118,12 +121,12 @@ const NoteCard = ({ note }: NoteCardProps) => {
                 <AddNotes />
                 <div className='flex space-x-2'>
                     {isSaving && (
-                        <div className='flex space-x-2'>
+                        <div className='flex space-x-2 items-center'>
                             <Loader className='animate-spin w-3' />
                             <span className='text-xs'>Saving...</span>
                         </div>
                     )}
-                    <NoteActionButton handleDeleteNotes={handleDeleteNotes} />
+                    <NoteActionButton handleDeleteNotes={handleDeleteNotes} isDeleting={deleting} />
                 </div>
             </div>
             <div className='p-4 rounded-t-none rounded-b-md'>

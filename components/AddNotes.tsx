@@ -7,8 +7,9 @@ import { createNotes } from '@/appwrite/notes.actions'
 import { NoteContext } from '@/context/NoteContext'
 
 const AddNotes = () => {
+  
   // @ts-ignore
-  const { setNotes } = useContext(NoteContext)
+  const { setNotes, userId} = useContext(NoteContext)
   const startingPos = useRef(10)
   const addNote = async () => {
     const payload = {
@@ -18,9 +19,8 @@ const AddNotes = () => {
       }),
       colors: JSON.stringify(colors[0])
     }
-    console.log(startingPos.current)
-    startingPos.current + 10
-    const response = await createNotes(payload)
+    startingPos.current += 10
+    const response = await createNotes(payload, userId)
 
     setNotes((prev: any) => [...prev, response])
 

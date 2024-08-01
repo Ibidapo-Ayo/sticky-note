@@ -10,37 +10,45 @@ type createContextProps = {
         body?: string;
         colors?: string;
         position?: string;
-    }[]
+    }[],
+    setUserId: (userId: string) => string,
+    userId: string,
+    loading?: boolean
 }
 
-export const NoteContext = createContext<createContextProps>({notes: []})
+export const NoteContext = createContext<createContextProps>({
+    notes: [],
+    setUserId: (userId: string) => "",
+    userId: ""
+})
 
 const NoteProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true)
     const [notes, setNotes] = useState<NoteCardProps[]>([])
+    const [userId, setUserId] = useState<string | null>("");
 
-    const fetchData = async () => {
-        const note:any = await getNotes()
+    const fetchData = async (userId?: string) => {
+        const note: any = await getNotes(userId!)
         setNotes(note)
         setLoading(false)
     }
 
     useEffect(() => {
-        fetchData()
-    }, [])
+        if (userId) {
+            fetchData(userId)
+        }
+    }, [userId])
 
-    const refresh = ()=>{
+
+    const refresh = () => {
         fetchData()
     }
 
-    const contextData = { notes, setNotes , refresh}
+    const contextData = { notes, setNotes, refresh, setUserId, userId, loading }
     return <NoteContext.Provider
-        // @ts-ignore
         value={contextData}
     >
-        {loading ? <div className="w-full h-screen flex justify-center items-center">
-            <Loader className="text-white animate-spin " />
-        </div> : children}
+        {children}
 
     </NoteContext.Provider>
 }

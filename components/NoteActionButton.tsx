@@ -5,23 +5,31 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Ellipsis } from 'lucide-react'
+import { Ellipsis, Loader } from 'lucide-react'
 
 type NoteActionButtonProps = {
-    handleDeleteNotes: () => void
+    handleDeleteNotes: () => void,
+    isDeleting?: boolean
 }
 
-const NoteActionButton = ({ handleDeleteNotes }: NoteActionButtonProps) => {
+const NoteActionButton = ({ handleDeleteNotes, isDeleting }: NoteActionButtonProps) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Ellipsis />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='border-none outline-none z-[1000]'>
+            <DropdownMenuContent className='border-none outline-none z-[1000] flex justify-center items-center'>
                 <DropdownMenuLabel
                     onClick={() => handleDeleteNotes()}
                     className='cursor-pointer'
-                >Delete Note</DropdownMenuLabel>
+                >
+                    {isDeleting ? (
+                        <Loader className='animate-spin w-5' />
+                    ) : (
+                        " Delete Note"
+                    )}
+
+                </DropdownMenuLabel>
             </DropdownMenuContent>
         </DropdownMenu>
 

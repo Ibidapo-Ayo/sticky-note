@@ -1,10 +1,13 @@
-import NotesPage from "./pages/NotesPage";
-
+import Register from "@/components/forms/Register";
 
 export default function Home() {
   return (
-    <main className="md:py-10 p-2 pb-2 h-screen relative overflow-hidden">
-      <NotesPage />
+    <main className="flex h-screen max-h-screen">
+      <div className="container my-auto">
+        <div className="sub-container max-w-[496px]">
+          <Register />
+        </div>
+      </div>
     </main>
   );
 }

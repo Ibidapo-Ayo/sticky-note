@@ -3,14 +3,16 @@ import { revalidatePath } from "next/cache"
 import { databases } from "./config"
 import { ID } from "appwrite"
 import { NoteCardProps } from "@/components/ui/NoteCard"
+import { Query } from "node-appwrite"
 
 const { NEXT_NOTES_DATABASE_ID, NEXT_NOTES_COLLECTION_ID } = process.env
 
-export const getNotes = async () => {
+export const getNotes = async (userId: string) => {
     try {
         const response = await databases.listDocuments(
             NEXT_NOTES_DATABASE_ID!,
-            NEXT_NOTES_COLLECTION_ID!
+            NEXT_NOTES_COLLECTION_ID!,
+            [Query.equal("users", userId)]
         )
         return response.documents
     } catch (error) {
@@ -22,13 +24,16 @@ type createNotesProp = Pick<NoteCardProps, "note">['note']
 
 type createNotesProps = Omit<createNotesProp, "$id" | "body">
 
-export const createNotes = async (payload: createNotesProps) => {
+export const createNotes = async (payload: createNotesProps, userId: string) => {
     try {
         const response = await databases.createDocument(
             NEXT_NOTES_DATABASE_ID!,
             NEXT_NOTES_COLLECTION_ID!,
             ID.unique(),
-            payload
+            {
+                ...payload,
+                users: userId
+            }
         )
 
         return response

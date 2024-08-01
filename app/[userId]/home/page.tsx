@@ -1,0 +1,29 @@
+"use client"
+import NoteCard from '@/components/ui/NoteCard'
+import { NoteContext } from '@/context/NoteContext'
+import { Loader } from 'lucide-react'
+import { useContext, useEffect } from 'react'
+
+const Home = ({ params }: any) => {
+    const { userId } = params
+    const { notes, setUserId, loading } = useContext(NoteContext)
+
+    useEffect(()=>{
+        setUserId(userId)
+    }, [])
+    
+    return (
+        <div className='md:py-10 p-2 pb-2 h-screen relative overflow-hidden'>
+            {loading ? <div className="w-full h-screen flex justify-center items-center">
+                <Loader className="text-white animate-spin " />
+            </div> : (
+                notes!.map((note) => (
+                    <NoteCard key={note.$id} note={note} />
+                ))
+            )}
+
+        </div>
+    )
+}
+
+export default Home
