@@ -21,7 +21,7 @@ const AddNotes = () => {
     }
     startingPos.current += 10
     const response = await createNotes(payload, userId)
-    setNotes((prev: any) => [...prev, response])
+    setNotes!((prev: any) => [...prev, response])
   }
   return (
     <Button variant={"ghost"} size={"icon"} className='hover:bg-transparent' onClick={addNote}>
