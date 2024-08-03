@@ -10,7 +10,8 @@ const Home = ({ params }: any) => {
 
     useEffect(()=>{
         setUserId(userId)
-    }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userId])
     
     return (
         <div className='md:py-10 p-2 pb-2 h-screen relative overflow-hidden'>

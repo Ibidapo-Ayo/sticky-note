@@ -11,18 +11,18 @@ import allColors from "@/public/assets/colors.json"
 
 export type NoteCardProps = {
     note: {
-        $id: string,
-        body: string,
-        colors: string,
-        position: string
+        $id?: string,
+        body?: string,
+        colors?: string,
+        position?: string
     }
 }
 
 const NoteCard = ({ note }: NoteCardProps) => {
     const { $id, body: noteBody, colors: noteColors, position: notePosition } = note
-    const body = bodyParser(noteBody)
-    const colors = JSON.parse(noteColors)
-    const [position, setPosition] = useState(bodyParser(notePosition))
+    const body = bodyParser(noteBody!)
+    const colors = JSON.parse(noteColors!)
+    const [position, setPosition] = useState(bodyParser(notePosition!))
     const [isSaving, setIsSaving] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [noteColor, setNoteColor] = useState(colors)
@@ -74,7 +74,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
         document.removeEventListener("mouseup", mouseUp);
 
         const newPosition = setNewOffset(cardRef.current)
-        saveData($id, "position", newPosition)
+        saveData($id!, "position", newPosition)
         setIsSaving(false)
     }
 
@@ -95,7 +95,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
 
     const handleDeleteNotes = async () => {
         setDeleting(true)
-        await deleteNotes($id)
+        await deleteNotes($id!)
         setNotes((prev: any) => prev.filter((n: any) => $id !== n.$id))
         setDeleting(false)
     }
@@ -104,11 +104,12 @@ const NoteCard = ({ note }: NoteCardProps) => {
         if (noteColor.id !== colors.id) {
             handleUpdateNote()
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [noteColor])
 
     const handleUpdateNote = async () => {
         const color = allColors.filter((color: any) => color.id === noteColor.id)
-        await saveData($id, "colors", color[0])
+        await saveData($id!, "colors", color[0])
     }
 
     return (
