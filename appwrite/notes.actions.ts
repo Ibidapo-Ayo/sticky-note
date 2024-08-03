@@ -20,9 +20,9 @@ export const getNotes = async (userId: string) => {
     }
 }
 
-type createNotesProp = Pick<NoteCardProps, "note">['note']
 
-type createNotesProps = Omit<createNotesProp, "$id" | "body">
+
+type createNotesProps = Omit<NoteCardProps, "$id" | "body">
 
 export const createNotes = async (payload: createNotesProps, userId: string) => {
     try {
