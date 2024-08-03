@@ -1,31 +1,27 @@
 "use client"
 import { getNotes } from "@/appwrite/notes.actions"
 import { NoteCardProps } from "@/components/ui/NoteCard"
-import { Loader } from "lucide-react"
-import { createContext, useEffect, useState } from "react"
+import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react"
 
 type createContextProps = {
-    notes: {
-        $id?: string;
-        body?: string;
-        colors?: string;
-        position?: string;
-    }[],
-    setUserId: (userId: string) => string,
+    notes: NoteCardProps[],
+    setUserId?: Dispatch<SetStateAction<string>>,
     userId: string,
-    loading?: boolean
+    loading?: boolean,
+    setNotes?: Dispatch<SetStateAction<NoteCardProps[]>>,
+    refresh?: ()=> void,
+
 }
 
 export const NoteContext = createContext<createContextProps>({
     notes: [],
-    setUserId: (userId: string) => "",
     userId: ""
 })
 
 const NoteProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true)
     const [notes, setNotes] = useState<NoteCardProps[]>([])
-    const [userId, setUserId] = useState<string | null>("");
+    const [userId, setUserId] = useState<string>("");
 
     const fetchData = async (userId?: string) => {
         const note: any = await getNotes(userId!)

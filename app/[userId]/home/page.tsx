@@ -9,7 +9,7 @@ const Home = ({ params }: any) => {
     const { notes, setUserId, loading } = useContext(NoteContext)
 
     useEffect(()=>{
-        setUserId(userId)
+        setUserId!(userId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId])
     

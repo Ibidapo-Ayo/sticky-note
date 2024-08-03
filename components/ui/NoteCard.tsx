@@ -10,15 +10,13 @@ import Colors from '../Colors'
 import allColors from "@/public/assets/colors.json"
 
 export type NoteCardProps = {
-    note: {
         $id?: string,
         body?: string,
         colors?: string,
         position?: string
-    }
 }
 
-const NoteCard = ({ note }: NoteCardProps) => {
+const NoteCard = ({note}: {note: NoteCardProps}) => {
     const { $id, body: noteBody, colors: noteColors, position: notePosition } = note
     const body = bodyParser(noteBody!)
     const colors = JSON.parse(noteColors!)
@@ -96,7 +94,7 @@ const NoteCard = ({ note }: NoteCardProps) => {
     const handleDeleteNotes = async () => {
         setDeleting(true)
         await deleteNotes($id!)
-        setNotes((prev: any) => prev.filter((n: any) => $id !== n.$id))
+        setNotes!((prev: any) => prev.filter((n: any) => $id !== n.$id))
         setDeleting(false)
     }
 
